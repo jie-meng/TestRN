@@ -29,7 +29,7 @@ import {
 
 import OmnichannelChatSDK from '@microsoft/omnichannel-chat-sdk';
 import { DeliveryMode, MessageContentType, MessageType, PersonType } from '@microsoft/omnichannel-chat-sdk';
-import createVoiceVideoCalling, {LocalVideoView, RemoteVideoView} from "@microsoft/omnichannel-voice-video-calling-react-native";
+import createVoiceVideoCalling, {LocalVideoView, RemoteVideoView} from '@microsoft/omnichannel-voice-video-calling-react-native';
 
 const omnichannelConfig = {
     orgUrl: "https://unq9fcc36a6f713ee11a66b6045bd016-crm.omnichannelengagementhub.com",
@@ -38,7 +38,7 @@ const omnichannelConfig = {
 };
 
 const chatSDK = new OmnichannelChatSDK.OmnichannelChatSDK(omnichannelConfig);
-const voiceVideoCallingSDK = createVoiceVideoCalling(omnichannelConfig, { disable: false });
+const voiceVideoCallingSDK = createVoiceVideoCalling(omnichannelConfig, { disable: true });
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -97,7 +97,7 @@ const App: () => Node = () => {
   }, []);
 
   const startChat = async () => {
-    console.log('startChat'); 
+    console.log('startChat');
 
     const customContext = {
       'contextKey1': { 'value': 'contextValue1', 'isDisplayable': true },
@@ -115,7 +115,15 @@ const App: () => Node = () => {
     await chatSDK.startChat(optionalParams2);
     // await chatSDK.startChat();
 
+    const callingToken = await chatSDK.getCallingToken();
+    console.log(callingToken);
+    await chatSDK.onAgentEndSession(async () => {
+      console.log(`ExampleApp/onAgentEndSession`);
+      await chatSDK?.endChat();
+    });
+
     // Get chat token
+    console.log(`ExampleApp/startChat/getChatToken`);
     const chatToken = await chatSDK?.getChatToken();
 
     // Ask permissions for android
@@ -124,7 +132,8 @@ const App: () => Node = () => {
     // Initialize VoiceVideoCallingSDK
     voiceVideoCallingSDK.initialize({
       chatToken,
-      OCClient: chatSDK.OCClient
+      callingToken,
+      OCClient: chatSDK.OCClient,
     });
     // voiceVideoCallingSDK.initialize();
 
@@ -172,7 +181,7 @@ const App: () => Node = () => {
     const messageToSend = {
         content: message
     };
-    
+
     await chatSDK.sendMessage(messageToSend);
   }
 
@@ -207,8 +216,8 @@ const App: () => Node = () => {
           />
           <View style={display ? styles.videoContainer : styles.noDisplay}>
             <RemoteVideoView style={styles.videoContainer} />
+            {/*<LocalVideoView style={ styles.videoContainer } />*/}
           </View>
-          {/* <RemoteVideoView style={ styles.videoContainer } /> */}
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.js</Text> to change this
             screen and then come back to see your edits.
