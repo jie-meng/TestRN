@@ -4,8 +4,8 @@ import { StyleSheet, View, ScrollView, TextInput, Button, TouchableHighlight, Pl
 
 import { OmnichannelChatSDK } from '@microsoft/omnichannel-chat-sdk';
 import createVoiceVideoCalling, {LocalVideoView, RemoteVideoView} from '@microsoft/omnichannel-voice-video-calling-react-native';
-import IncomingCall from './IncomingCall';
-import CurrentCallMenu from './CurrentCallMenu';
+import IncomingCall from './components/IncomingCall';
+import CurrentCallMenu from './components/CurrentCallMenu';
 
 export default function App() {
   const [chatSDK, setChatSDK] = useState<OmnichannelChatSDK>();
@@ -18,9 +18,15 @@ export default function App() {
   const [isLocalVideoEnabled, setIsLocalVideoEnabled] = useState(false);
   const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
   const [isUsingSpeaker, setIsUsingSpeaker] = useState(false); // TODO: Use SDK
-  const [widgetId, onChangeWidgetId] = React.useState(null);
-  const [organizationId, onChangeOrganizationId] = React.useState(null);
-  const [organizationURL, onChangeOrganizationURL] = React.useState(null);
+  const [widgetId, onChangeWidgetId] = React.useState(
+    '349878a5-b14a-468a-8f8a-c97683d9aee5',
+  );
+  const [organizationId, onChangeOrganizationId] = React.useState(
+    '75a65780-8306-ee11-a66d-000d3a106b24',
+  );
+  const [organizationURL, onChangeOrganizationURL] = React.useState(
+    'https://unq75a657808306ee11a66d000d3a106-crm.omnichannelengagementhub.com',
+  );
 
   const onLoadChatWidget = async () => {
     if (widgetId && organizationId && organizationURL) {
