@@ -11,16 +11,18 @@ import {
 } from 'react-native';
 
 import {OmnichannelChatSDK} from '@microsoft/omnichannel-chat-sdk';
+
 import createVoiceVideoCalling, {
   LocalVideoView,
   RemoteVideoView,
+  // @ts-ignore
 } from '@microsoft/omnichannel-voice-video-calling-react-native';
 import IncomingCall from './components/IncomingCall';
 import CurrentCallMenu from './components/CurrentCallMenu';
 
 export default function App() {
   const [chatSDK, setChatSDK] = useState<OmnichannelChatSDK>();
-  const [voiceVideoCallingSDK, setVoiceVideoCallingSDK] = useState();
+  const [voiceVideoCallingSDK, setVoiceVideoCallingSDK] = useState<any>();
   const [isReady, setIsReady] = useState(false);
   const [hasChatStarted, setHasChatStarted] = useState(false);
   const [incomingCall, setIncomingCall] = useState(false);

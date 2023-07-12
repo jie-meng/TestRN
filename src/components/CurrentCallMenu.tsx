@@ -61,8 +61,8 @@ const CurrentCallMenu = (props: CurrentCallMenuProps) => {
         style={{
           ...styles.toggleSpeakerButton,
           ...(props.isUsingSpeaker
-            ? { backgroundColor: 'white' }
-            : { backgroundColor: 'rgb(60, 60, 61)' }),
+            ? {backgroundColor: 'white'}
+            : {backgroundColor: 'rgb(60, 60, 61)'}),
         }}
         onPress={toggleSpeakerButton}>
         <Image
