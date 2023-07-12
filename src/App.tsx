@@ -1,9 +1,20 @@
 import React, {useState} from 'react';
 
-import { StyleSheet, View, ScrollView, TextInput, Button, TouchableHighlight, Platform} from 'react-native';
+import {
+  Button,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableHighlight,
+  View,
+} from 'react-native';
 
-import { OmnichannelChatSDK } from '@microsoft/omnichannel-chat-sdk';
-import createVoiceVideoCalling, {LocalVideoView, RemoteVideoView} from '@microsoft/omnichannel-voice-video-calling-react-native';
+import {OmnichannelChatSDK} from '@microsoft/omnichannel-chat-sdk';
+import createVoiceVideoCalling, {
+  LocalVideoView,
+  RemoteVideoView,
+} from '@microsoft/omnichannel-voice-video-calling-react-native';
 import IncomingCall from './components/IncomingCall';
 import CurrentCallMenu from './components/CurrentCallMenu';
 
@@ -30,60 +41,63 @@ export default function App() {
 
   const onLoadChatWidget = async () => {
     if (widgetId && organizationId && organizationURL) {
-      console.log("Omnichannel Config");
-      let omnichannelConfig = {};
-      omnichannelConfig["orgId"] = organizationId;
-      omnichannelConfig["orgUrl"] = organizationURL;
-      omnichannelConfig["widgetId"] = widgetId;
+      console.log('Omnichannel Config');
+      let omnichannelConfig = {
+        orgId: organizationId,
+        orgUrl: organizationURL,
+        widgetId: widgetId,
+      };
 
       const chatSDK = new OmnichannelChatSDK(omnichannelConfig);
       await chatSDK.initialize();
-      const voiceVideoCallingSDK = createVoiceVideoCalling(omnichannelConfig, {disable: true});
+      const voiceVideoCallingSDK = createVoiceVideoCalling(omnichannelConfig, {
+        disable: true,
+      });
       setVoiceVideoCallingSDK(voiceVideoCallingSDK);
 
       setChatSDK(chatSDK);
 
       voiceVideoCallingSDK.onCallAdded(() => {
-        console.log("ExampleApp/onCallAdded");
+        console.log('ExampleApp/onCallAdded');
         setIncomingCall(true);
-        console.log("ExampleApp/onCallAdded/setIncomingCall");
+        console.log('ExampleApp/onCallAdded/setIncomingCall');
       });
 
       voiceVideoCallingSDK.onCallEnded(() => {
-        console.log("ExampleApp/onCallEnded");
+        console.log('ExampleApp/onCallEnded');
         setIncomingCall(false);
-        console.log("ExampleApp/onCallEnded/setIncomingCall");
-      })
+        console.log('ExampleApp/onCallEnded/setIncomingCall');
+      });
 
       voiceVideoCallingSDK.onLocalVideoStreamAdded(() => {
-        console.log("ExampleApp/onLocalVideoStreamAdded");
+        console.log('ExampleApp/onLocalVideoStreamAdded');
         setIsLocalVideoEnabled(true);
-        if(!inVideoCall) {
+        if (!inVideoCall) {
           setInVideoCall(true);
         }
       });
 
       voiceVideoCallingSDK.onLocalVideoStreamRemoved(() => {
-        console.log("ExampleApp/onLocalVideoStreamRemoved");
+        console.log('ExampleApp/onLocalVideoStreamRemoved');
         setIsLocalVideoEnabled(false);
-        if(inVideoCall) {
+        if (inVideoCall) {
           setInVideoCall(false);
         }
       });
 
       voiceVideoCallingSDK.onRemoteVideoStreamAdded(() => {
-        console.log("ExampleApp/onRemoteVideoStreamAdded");
-        if(!inVideoCall) {
+        console.log('ExampleApp/onRemoteVideoStreamAdded');
+        if (!inVideoCall) {
           setInVideoCall(true);
         }
-      })
+      });
 
       voiceVideoCallingSDK.onRemoteVideoStreamRemoved(() => {
-        console.log("ExampleApp/onRemoteVideoStreamRemoved");
-        if(inVideoCall) {
+        console.log('ExampleApp/onRemoteVideoStreamRemoved');
+        if (inVideoCall) {
           setInVideoCall(false);
         }
-      })
+      });
 
       voiceVideoCallingSDK.onCallDisconnected(() => {
         setIncomingCall(false);
@@ -93,39 +107,39 @@ export default function App() {
 
       setIsReady(true);
     }
-  }
+  };
 
   const onStartChatPress = async () => {
-    console.log(`ExampleApp/startChat`);
+    console.log('ExampleApp/startChat');
 
     if (hasChatStarted) {
-      console.log(`ExampleApp/startChat/alreadyStarted`);
+      console.log('ExampleApp/startChat/alreadyStarted');
       return;
     }
 
     await chatSDK?.startChat();
     const callingToken = await chatSDK?.getCallingToken();
     console.log(callingToken);
-    chatSDK?.onAgentEndSession(async () => {
-      console.log(`ExampleApp/onAgentEndSession`);
+    await chatSDK?.onAgentEndSession(async () => {
+      console.log('ExampleApp/onAgentEndSession');
       await chatSDK?.endChat();
       setHasChatStarted(false);
     });
 
-    console.log(`ExampleApp/startChat/getChatToken`);
+    console.log('ExampleApp/startChat/getChatToken');
     const chatToken: any = await chatSDK?.getChatToken();
 
     voiceVideoCallingSDK?.initialize({
       chatToken,
       callingToken,
-      OCClient: chatSDK?.OCClient
+      OCClient: chatSDK?.OCClient,
     });
 
     setHasChatStarted(true);
-  }
+  };
 
   const onEndChatPress = async () => {
-    console.log(`ExampleApp/endChat`);
+    console.log('ExampleApp/endChat');
 
     if (!hasChatStarted) {
       return;
@@ -133,98 +147,118 @@ export default function App() {
 
     await chatSDK?.endChat();
     setHasChatStarted(false);
-  }
+  };
 
   const onRejectCall = () => {
     if (!incomingCall) {
       return;
     }
 
-    console.log(`ExampleApp/IncomingCall/rejectCall`);
+    console.log('ExampleApp/IncomingCall/rejectCall');
     voiceVideoCallingSDK.rejectCall();
 
     setIncomingCall(false);
-  }
+  };
 
   const onAcceptVideoCall = async () => {
     if (!incomingCall) {
       return;
     }
 
-    console.log(`ExampleApp/IncomingCall/acceptVideoCall`);
+    console.log('ExampleApp/IncomingCall/acceptVideoCall');
     const withVideo = true;
     voiceVideoCallingSDK.acceptCall(withVideo);
 
     const isMicrophoneMuted = await voiceVideoCallingSDK.isMicrophoneMuted();
     setIsMicrophoneMuted(isMicrophoneMuted);
 
-    console.log(`ExampleApp/IncomingCall/acceptVideoCall/isMicrophoneMuted ${isMicrophoneMuted}`);
+    console.log(
+      `ExampleApp/IncomingCall/acceptVideoCall/isMicrophoneMuted ${isMicrophoneMuted}`,
+    );
 
     setIncomingCall(false);
     setInVideoCall(true);
-  }
+  };
 
   const onAcceptVoiceCall = async () => {
     if (!incomingCall) {
       return;
     }
 
-    console.log(`ExampleApp/IncomingCall/acceptVoiceCall`);
+    console.log('ExampleApp/IncomingCall/acceptVoiceCall');
     voiceVideoCallingSDK.acceptCall();
 
     const isMicrophoneMuted = await voiceVideoCallingSDK.isMicrophoneMuted();
     setIsMicrophoneMuted(isMicrophoneMuted);
 
-    console.log(`ExampleApp/IncomingCall/acceptVoiceCall/isMicrophoneMuted ${isMicrophoneMuted}`);
+    console.log(
+      `ExampleApp/IncomingCall/acceptVoiceCall/isMicrophoneMuted ${isMicrophoneMuted}`,
+    );
 
     setIncomingCall(false);
     setInVoiceCall(true);
-  }
+  };
 
   const onToggleVideo = () => {
-    console.log(`ExampleApp/onToggleVideo`);
+    console.log('ExampleApp/onToggleVideo');
     voiceVideoCallingSDK.toggleLocalVideo();
-  }
+  };
 
   const onToggleMute = async () => {
-    console.log(`ExampleApp/onToggleMute`);
+    console.log('ExampleApp/onToggleMute');
 
     const isMicrophoneMuted = await voiceVideoCallingSDK.toggleMute();
-    console.log(`Toggle mute completed`)
+    console.log('Toggle mute completed');
     setIsMicrophoneMuted(isMicrophoneMuted);
 
-    console.log(`ExampleApp/onToggleMute/isMicrophoneMuted ${isMicrophoneMuted}`);
-  }
+    console.log(
+      `ExampleApp/onToggleMute/isMicrophoneMuted ${isMicrophoneMuted}`,
+    );
+  };
 
   const onStopCall = () => {
-    console.log(`ExampleApp/onStopCall`);
+    console.log('ExampleApp/onStopCall');
     voiceVideoCallingSDK.stopCall();
     setInVideoCall(false);
     setInVoiceCall(false);
-  }
+  };
 
   const onToggleSpeaker = () => {
-    console.log(`ExampleApp/onToggleSpeaker`);
+    console.log('ExampleApp/onToggleSpeaker');
     voiceVideoCallingSDK.toggleSpeaker();
     setIsUsingSpeaker(!isUsingSpeaker);
-  }
+  };
 
   const onToggleCamera = () => {
-    console.log(`ExampleApp/onToggleCamera`);
+    console.log('ExampleApp/onToggleCamera');
     voiceVideoCallingSDK.toggleCamera();
-  }
+  };
 
   return (
-      <View style={styles.container}>
-      {incomingCall && <IncomingCall onRejectCall={onRejectCall} onAcceptVideoCall={onAcceptVideoCall} onAcceptVoiceCall={onAcceptVoiceCall} />}
-      <View style={inVideoCall? styles.videoContainer: styles.noDisplay}>
+    <View style={styles.container}>
+      {incomingCall && (
+        <IncomingCall
+          onRejectCall={onRejectCall}
+          onAcceptVideoCall={onAcceptVideoCall}
+          onAcceptVoiceCall={onAcceptVoiceCall}
+        />
+      )}
+      <View style={inVideoCall ? styles.videoContainer : styles.noDisplay}>
         <RemoteVideoView style={styles.remoteVideo} />
         <LocalVideoView crop style={styles.localVideo} />
       </View>
-      {(inVoiceCall || inVideoCall) && <CurrentCallMenu
-        isLocalVideoEnabled={isLocalVideoEnabled} isMicrophoneMuted={isMicrophoneMuted} isUsingSpeaker={isUsingSpeaker}
-        onToggleVideo={onToggleVideo} onToggleMute={onToggleMute} onStopCall={onStopCall} onToggleSpeaker={onToggleSpeaker} onToggleCamera={onToggleCamera} />
-      }
+      {(inVoiceCall || inVideoCall) && (
+        <CurrentCallMenu
+          isLocalVideoEnabled={isLocalVideoEnabled}
+          isMicrophoneMuted={isMicrophoneMuted}
+          isUsingSpeaker={isUsingSpeaker}
+          onToggleVideo={onToggleVideo}
+          onToggleMute={onToggleMute}
+          onStopCall={onStopCall}
+          onToggleSpeaker={onToggleSpeaker}
+          onToggleCamera={onToggleCamera}
+        />
+      )}
 
       <View style={styles.textBoxContainer}>
         <ScrollView>
@@ -247,16 +281,24 @@ export default function App() {
             placeholder="Organization Url"
           />
           <TouchableHighlight style={styles.touchableHighlight}>
-          <Button title="Load Widget" onPress={onLoadChatWidget}/>
-        </TouchableHighlight>
+            <Button title="Load Widget" onPress={onLoadChatWidget} />
+          </TouchableHighlight>
         </ScrollView>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableHighlight style={styles.touchableHighlight}>
-          <Button title="Start Chat" onPress={onStartChatPress} disabled={!isReady || hasChatStarted}/>
+          <Button
+            title="Start Chat"
+            onPress={onStartChatPress}
+            disabled={!isReady || hasChatStarted}
+          />
         </TouchableHighlight>
         <TouchableHighlight style={styles.touchableHighlight}>
-          <Button title="End Chat" onPress={onEndChatPress} disabled={!hasChatStarted}/>
+          <Button
+            title="End Chat"
+            onPress={onEndChatPress}
+            disabled={!hasChatStarted}
+          />
         </TouchableHighlight>
       </View>
     </View>
@@ -269,34 +311,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textBoxContainer: {
-    flexDirection:'row',
-    flexWrap:'wrap',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     display: 'flex',
     justifyContent: 'center',
     margin: 5,
     ...Platform.select({
-      ios: {
-        marginTop: 80
-      }
-    })
+      ios: {
+        marginTop: 80,
+      },
+    }),
   },
   buttonContainer: {
-    flexDirection:'row',
-    flexWrap:'wrap',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   touchableHighlight: {
-    margin: 3
+    margin: 3,
   },
   videoContainer: {
     position: 'relative',
     width: '100%',
     height: '40%',
-    backgroundColor: 'rgb(25, 25, 25)'
+    backgroundColor: 'rgb(25, 25, 25)',
   },
   noDisplay: {
     display: 'none',
     height: 0,
-    width: 0
+    width: 0,
   },
   localVideo: {
     position: 'absolute',
@@ -305,7 +347,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: '#258a23',
-    elevation: 1
+    elevation: 1,
   },
   remoteVideo: {
     width: '100%',
