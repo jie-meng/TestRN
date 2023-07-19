@@ -31,15 +31,9 @@ export default function App() {
   const [isLocalVideoEnabled, setIsLocalVideoEnabled] = useState(false);
   const [isMicrophoneMuted, setIsMicrophoneMuted] = useState(false);
   const [isUsingSpeaker, setIsUsingSpeaker] = useState(false); // TODO: Use SDK
-  const [widgetId, onChangeWidgetId] = React.useState(
-    '349878a5-b14a-468a-8f8a-c97683d9aee5',
-  );
-  const [organizationId, onChangeOrganizationId] = React.useState(
-    '75a65780-8306-ee11-a66d-000d3a106b24',
-  );
-  const [organizationURL, onChangeOrganizationURL] = React.useState(
-    'https://unq75a657808306ee11a66d000d3a106-crm.omnichannelengagementhub.com',
-  );
+  const [widgetId, onChangeWidgetId] = useState('');
+  const [organizationId, onChangeOrganizationId] = useState('');
+  const [organizationURL, onChangeOrganizationURL] = useState('');
 
   const onLoadChatWidget = async () => {
     if (widgetId && organizationId && organizationURL) {
