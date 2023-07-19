@@ -79,9 +79,11 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
+    root: new File(gradle.ext.getNpmModulePath('react-native'), "../../").path,
+    cliPath: "${gradle.ext.getNpmModulePath('react-native')}",
 ]
 
-apply from: "../../node_modules/react-native/react.gradle"
+apply from: "${gradle.ext.getNpmModulePath('react-native')}/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -142,6 +144,9 @@ android {
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
+            def rn = 'react-native'
+            def nodeModulesDir = gradle.ext.getNpmModulePath(rn)
+            nodeModulesDir = nodeModulesDir.substring(0, nodeModulesDir.lastIndexOf(rn) - 1)
             // We configure the NDK build only if you decide to opt-in for the New Architecture.
             externalNativeBuild {
                 ndkBuild {
@@ -150,9 +155,9 @@ android {
                         "NDK_TOOLCHAIN_VERSION=clang",
                         "GENERATED_SRC_DIR=$buildDir/generated/source",
                         "PROJECT_BUILD_DIR=$buildDir",
-                        "REACT_ANDROID_DIR=$rootDir/../node_modules/react-native/ReactAndroid",
-                        "REACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build",
-                        "NODE_MODULES_DIR=$rootDir/../node_modules"
+                        "REACT_ANDROID_DIR=$nodeModulesDir/react-native/ReactAndroid",
+                        "REACT_ANDROID_BUILD_DIR=$nodeModulesDir/react-native/ReactAndroid/build",
+                        "NODE_MODULES_DIR=$nodeModulesDir"
                     cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
                     cppFlags "-std=c++17"
                     // Make sure this target name is the same you specify inside the
@@ -316,7 +321,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: file("${gradle.ext.getNpmModulePath('@react-native-community/cli-platform-android')}/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
 def isNewArchitectureEnabled() {
     // To opt-in for the New Architecture, you can either:

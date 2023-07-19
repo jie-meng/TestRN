@@ -1,0 +1,18 @@
+rootProject.name = 'TestRN'
+
+gradle.ext.getNpmModulePath = { String module ->
+    def packageJson = '/package.json'
+    def path = ['node', '--print', "require.resolve('${module}${packageJson}')"].execute(null, rootDir).text.trim()
+    return path.substring(0, path.length() - packageJson.length())
+}
+
+apply from: file("${gradle.ext.getNpmModulePath('@react-native-community/cli-platform-android')}/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+includeBuild(gradle.ext.getNpmModulePath('react-native-gradle-plugin'))
+
+if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true") {
+    include(":ReactAndroid")
+    project(":ReactAndroid").projectDir = file("${gradle.ext.getNpmModulePath('react-native')}/ReactAndroid")
+    include(":ReactAndroid:hermes-engine")
+    project(":ReactAndroid:hermes-engine").projectDir = file("${gradle.ext.getNpmModulePath('react-native')}/ReactAndroid/hermes-engine")
+}
