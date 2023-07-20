@@ -17,8 +17,7 @@ import createVoiceVideoCalling, {
   RemoteVideoView,
   // @ts-ignore
 } from '@microsoft/omnichannel-voice-video-calling-react-native';
-import IncomingCall from './components/IncomingCall';
-import CurrentCallMenu from './components/CurrentCallMenu';
+import {IncomingCall, CurrentCallMenu} from '@shared/components';
 
 export default function App() {
   const [chatSDK, setChatSDK] = useState<OmnichannelChatSDK>();

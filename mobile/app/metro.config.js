@@ -10,7 +10,10 @@ const fs = require('fs');
 
 const projectRoot = __dirname;
 const workspaceRoot = path.resolve(projectRoot, '../..');
-const monorepoPackages = path.resolve(workspaceRoot, 'mobile'); // uncomment this line after adding packages and add it in watch folders
+const monorepoPackages = [
+  path.resolve(workspaceRoot, 'mobile'),
+  path.resolve(workspaceRoot, 'shared'),
+]; // uncomment this line after adding packages and add it in watch folders
 const projectNodeModules = path.resolve(projectRoot, 'node_modules');
 const nodeModulesPaths = [path.resolve(workspaceRoot, 'node_modules')];
 
@@ -18,7 +21,7 @@ if (fs.existsSync(projectNodeModules)) {
   nodeModulesPaths.push(projectNodeModules);
 }
 
-const config = {
+module.exports = {
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -34,7 +37,5 @@ const config = {
       tls: require.resolve('node-libs-react-native/mock/tls'),
     },
   },
-  watchFolders: [__dirname, ...nodeModulesPaths, monorepoPackages],
+  watchFolders: [__dirname, ...nodeModulesPaths, ...monorepoPackages],
 };
-
-module.exports = config;
