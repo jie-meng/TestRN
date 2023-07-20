@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View, TouchableHighlight, Image, Text} from 'react-native';
+import {StyleSheet, View, Pressable, Image, Text} from 'react-native';
 import phone from '../assets/phone-white.png';
 import video from '../assets/video-white.png';
 import phoneOff from '../assets/phone-off-white.png';
@@ -15,21 +15,21 @@ const IncomingCall = (props: IncomingCallProps) => {
     <View style={styles.container}>
       <Text style={styles.containerTitle}> Incoming Call </Text>
       <View style={styles.buttonContainer}>
-        <TouchableHighlight
+        <Pressable
           style={styles.rejectCallButton}
           onPress={props.onRejectCall}>
           <Image source={phoneOff} />
-        </TouchableHighlight>
-        <TouchableHighlight
+        </Pressable>
+        <Pressable
           style={styles.acceptVideoCallButton}
           onPress={props.onAcceptVideoCall}>
           <Image source={video} />
-        </TouchableHighlight>
-        <TouchableHighlight
+        </Pressable>
+        <Pressable
           style={styles.acceptVoiceCallButton}
           onPress={props.onAcceptVoiceCall}>
           <Image source={phone} />
-        </TouchableHighlight>
+        </Pressable>
       </View>
     </View>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, TouchableHighlight, View} from 'react-native';
+import {Image, StyleSheet, Pressable, View} from 'react-native';
 import video from '../assets/video-white.png';
 import videoOff from '../assets/video-off-white.png';
 import phoneOff from '../assets/phone-off-white.png';
@@ -43,21 +43,21 @@ const CurrentCallMenu = (props: CurrentCallMenuProps) => {
 
   return (
     <View style={styles.container}>
-      <TouchableHighlight
+      <Pressable
         style={styles.toggleVideoButton}
         onPress={toggleVideo}>
         <Image
           source={props.isLocalVideoEnabled ? video : videoOff}
           style={styles.image}
         />
-      </TouchableHighlight>
-      <TouchableHighlight style={styles.toggleMuteButton} onPress={toggleMute}>
+      </Pressable>
+      <Pressable style={styles.toggleMuteButton} onPress={toggleMute}>
         <Image
           source={props.isMicrophoneMuted ? micOff : mic}
           style={styles.image}
         />
-      </TouchableHighlight>
-      <TouchableHighlight
+      </Pressable>
+      <Pressable
         style={{
           ...styles.toggleSpeakerButton,
           ...(props.isUsingSpeaker
@@ -69,15 +69,13 @@ const CurrentCallMenu = (props: CurrentCallMenuProps) => {
           source={props.isUsingSpeaker ? speaker : speakerOff}
           style={styles.image}
         />
-      </TouchableHighlight>
-      <TouchableHighlight
-        style={styles.toggleCameraButton}
-        onPress={toggleCameraButton}>
-        <Image source={flip} style={styles.image} />
-      </TouchableHighlight>
-      <TouchableHighlight style={styles.stopCallButton} onPress={stopCall}>
-        <Image source={phoneOff} style={styles.image} />
-      </TouchableHighlight>
+      </Pressable>
+      <Pressable style={styles.toggleCameraButton} onPress={toggleCameraButton}>
+        <Image source={flip} style={styles.image}/>
+      </Pressable>
+      <Pressable style={styles.stopCallButton} onPress={stopCall}>
+        <Image source={phoneOff} style={styles.image}/>
+      </Pressable>
     </View>
   );
 };
